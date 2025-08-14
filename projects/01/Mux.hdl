@@ -6,10 +6,29 @@
  * Multiplexor:
  * if (sel = 0) out = a, else out = b
  */
+
+// (NOT(a) AND b AND c) OR (a AND NOT(b) AND NOT(c)) OR (a AND b AND NOT(c)) OR (a AND b AND c)
 CHIP Mux {
     IN a, b, sel;
     OUT out;
 
+    // TODO: make it better lol
     PARTS:
-    //// Replace this comment with your code.
+    Not(in=a, out=nota);
+    And(a=nota, b=b, out=notab);
+    And(a=notab, b=sel, out=outa);
+
+    Not(in=b, out=notb);
+    And(a=a, b=notb, out=anotb);
+    Not(in=sel, out=notsel);
+    And(a=anotb, b=notsel, out=outb);
+
+    And(a=a, b=b, out=ab);
+    And(a=ab, b=notsel, out=outc);
+
+    And(a=ab, b=sel, out=outd);
+
+    Or(a=outa, b=outb, out=oute);
+    Or(a=oute, b=outc, out=outf);
+    Or(a=outf, b=outd, out=out);
 }
